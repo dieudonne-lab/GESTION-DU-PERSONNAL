@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color: rgb(250, 92, 92);">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Realtime Fetching From Firebase Databases</title>
+    <style>
+        .container{
+            max-width: 900px;
+            font-family: sans-serif;
+            margin-left: 20px;
+        }
+        h1{
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        table{
+            width: 1000px;
+            border-spacing: 0px;
+        }
+        th{
+            text-align: left;
+        }
+        table td:focus{
+            background-color: #eae9e9;
+            max-width: 70px;
+        }
+        td:nth-child(5){
+            width: 200px;
+           
+        ;
+        }
+        td:last-child{
+            text-align: right;
+            width: 120px;
+            padding-right: 20px;
+            
+        }
+        table th,
+        table td{
+            padding: 15px 0px;
+            border-bottom: 1px solid #cacaca;
+            border-top: 1px solid #cacaca;
+            outline: none;
+            padding-left: 40px;
+          
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <button>
+            <a href="welc.html">LOGOUT</a>
+        </button>
+    </nav>
+    <div class="container">
+        <h1>GESTION DU PERSONNEL</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th style="background-color: blue;">Name</th>
+                    <th style="padding-left: 40px;background-color: blue;">SALAIRE</th>
+                    <th style="background-color: blue;">DEBUT ENGAGEMENT</th>
+                    <th style="background-color: blue;">FIN ENGAGEMENT</th>
+                    <th style="background-color: blue;">POST_REF</th>
+                    <th style="background-color: blue;">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+<!-- add firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-database-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+        databaseURL: "https://table-sep-default-rtdb.firebaseio.com"
+    }
+    firebase.initializeApp(firebaseConfig)
+    // here connection is created with database
+    const database = firebase.database()
+
+    const dataContainer = document.querySelector('tbody')
+
+    // give complete path to fetch data as given during sending
+    var fetchedData = database.ref('messages/')
+    fetchedData.on('value', (snapshot) => {
+        var data = snapshot.val()
+        // now set data in table
+        var htmlData = ''
+        for(var key in data){
+            var value = data[key]
+            htmlData += `
+                <tr>
+                    <td>${value.Name}</td>
+                    <td>${value.salaire}</td>
+                    <td>${value.date_de_debut_engagement}</td>
+                    <td>${value.date_de_fin_engagement}</td>
+                    <td>${value.post_ref}</td>
+                    <td >
+                        <button onclick="readyForUpdate('${key}')">Update</button>
+                        <button onclick="removeMess('${key}')">Delete</p></button>
+                    </td>
+                </tr>
+            `;
+        }
+        // we use unique id's as reference to delete and update data
+        dataContainer.innerHTML = htmlData
+    })
+
+    // remove message function
+    function removeMess(uniqueId){
+        database.ref('messages/' + uniqueId).remove()
+        // this realtime remove will delete data without any loading
+        // as data is updated, it refetch and rerender in html automatically
+    }
+
+    // update function 
+    function readyForUpdate(uniqueId, elem){
+        // lets ready for update
+        // it will get all the td of the tr in which btn in clicked
+        var siblingTd = elem.parentElement.parentElement.getElementsByTagName('td')
+        // convert first three td to editable
+        for(var i = 0; i < siblingTd.length-1; i++){
+            siblingTd[i].contentEditable = true
+            siblingTd[i].classList.add('temp-update-class')
+        }
+        // also change onclick function
+        elem.setAttribute('onclick', `updateNow('${uniqueId}')`)
+        elem.innerHTML = 'Send'
+    }
+
+    // create updateNow function
+    function updateNow(uniqueId){
+        var contentId = document.querySelectorAll('.temp-update-class')
+        // now create obj using same keys as used during sending
+        var obj = {
+            'Name': contentId[0].textContent,
+            'salaire': contentId[1].textContent,
+            'ddate_debut_engagement': contentId[2].textContent,
+            'ddate_debut_engagement': contentId[3].textContent,
+            'post_ref': contentId[4].textContent
+        }
+        // create reference to the data first where data will update
+        // uniqueId will be the id of each message in db
+        var listRef = database.ref('messages/' + uniqueId)
+        // now provide updated data
+        listRef.update(obj)
+        // after update new data will rerender automatically
+        // same as during delete
+    }
+
+</script>
+</body>
+</html>
