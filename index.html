@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>GESTION PERSONNEL</title>
     <style>
         .container{
             max-width: 900px;
             font-family: sans-serif;
+            margin: auto;
             margin-left: 20px;
         }
         h1{
@@ -17,7 +17,7 @@
             margin-bottom: 30px;
         }
         table{
-            width: 1000px;
+            width: 100%;
             border-spacing: 0px;
         }
         th{
@@ -25,17 +25,13 @@
         }
         table td:focus{
             background-color: #eae9e9;
-            max-width: 70px;
         }
         td:nth-child(5){
-            width: 200px;
-           
-        ;
+            width: 300px;
+            padding-left: 40px;
         }
         td:last-child{
             text-align: right;
-            width: 120px;
-            padding-right: 20px;
             
         }
         table th,
@@ -45,27 +41,26 @@
             border-top: 1px solid #cacaca;
             outline: none;
             padding-left: 40px;
-          
+            max-width: 70px;
+            
         }
     </style>
 </head>
 <body>
-    <nav>
-        <button>
-            <a href="welc.html">LOGOUT</a>
-        </button>
-    </nav>
+    <button>
+        <a href="welc.html">LOGOUT</a>
+    </button>
     <div class="container">
-        <h1>GESTION DU PERSONNEL</h1>
+        <h1>DATABASE_GESTION DE PERSONNEL</h1>
         <table>
             <thead>
                 <tr>
                     <th style="background-color: blue;">Name</th>
                     <th style="padding-left: 40px;background-color: blue;">SALAIRE</th>
-                    <th style="background-color: blue;">DEBUT ENGAGEMENT</th>
-                    <th style="background-color: blue;">FIN ENGAGEMENT</th>
+                    <th style="background-color: blue;">DATE DEBUT ENGAGEMENT</th>
+                    <th style="background-color: blue;">DATE FIN ENGAGEMENT</th>
                     <th style="background-color: blue;">POST_REF</th>
-                    <th style="background-color: blue;">ACTIONS</th>
+                    <th style="background-color: blue;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -101,9 +96,9 @@
                     <td>${value.date_de_debut_engagement}</td>
                     <td>${value.date_de_fin_engagement}</td>
                     <td>${value.post_ref}</td>
-                    <td >
-                        <button onclick="readyForUpdate('${key}')">Update</button>
-                        <button onclick="removeMess('${key}')">Delete</p></button>
+                    <td>
+                        <button onclick="readyForUpdate('${key}', this)">Update</button>
+                        <button onclick="removeMess('${key}')">Delete</button>
                     </td>
                 </tr>
             `;
